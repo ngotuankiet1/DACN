@@ -4,7 +4,7 @@ import ProductCard from '../Home/ProductCard';
 
 var {width} = Dimensions.get('window');
 
-export default function HomeProduct({products}) {
+export default function HomeProduct({products, navigation, wishlistData}) {
   return (
     <View style={styles.container}>
       <Text
@@ -18,7 +18,12 @@ export default function HomeProduct({products}) {
       <View style={styles.productCard}>
         {products &&
           products.map(product => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard
+              key={product._id}
+              product={product}
+              navigation={navigation}
+              wishlistData={wishlistData}
+            />
           ))}
       </View>
     </View>
@@ -28,10 +33,9 @@ export default function HomeProduct({products}) {
 const styles = StyleSheet.create({
   container: {
     width: width,
-    height: 550,
     padding: 10,
     marginVertical: 10,
-    marginBottom: width / 6 -5
+    marginBottom: width / 6 - 5,
   },
   productCard: {
     width: width * 1 - 10,

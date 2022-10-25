@@ -5,13 +5,15 @@ import {getProduct} from '../../Redux/Actions/ProductAction';
 import Banner from '../components/Home/Banner';
 import HomeProduct from '../components/Home/HomeProduct';
 import Header from '../components/Layout/Header';
+import Loader from '../components/Layout/Loader';
 
 var {width} = Dimensions.get('window');
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
-
   const {products, error, loading} = useSelector(state => state.products);
+  const {wishlistData} = useSelector(state => state.wishList);
+
   useEffect(() => {
     if (error) {
       alert(error);
@@ -23,7 +25,7 @@ export default function HomeScreen({navigation}) {
   return (
     <>
       {loading ? (
-        <Text>Loading</Text>
+        <Loader />
       ) : (
         <View>
           <ScrollView
@@ -31,7 +33,11 @@ export default function HomeScreen({navigation}) {
             showsVerticalScrollIndicator={false}>
             <Header navigation={navigation} />
             <Banner />
-            <HomeProduct products={products} />
+            <HomeProduct
+              products={products}
+              navigation={navigation}
+              wishlistData={wishlistData}
+            />
           </ScrollView>
         </View>
       )}

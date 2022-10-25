@@ -17,6 +17,8 @@
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.0",
     "@reduxjs/toolkit": "^1.8.5",
+    "@stripe/stripe-js": "^1.32.0",
+    "@stripe/stripe-react-native": "^0.15.0",
     "add": "^2.0.6",
     "axios": "^0.26.0",
     "lottie-react-native": "^5.1.4",

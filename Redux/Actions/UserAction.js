@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import {URI} from '../URI';
 // Login User
 export const userLogin = (email, password) => async dispatch => {
   try {
@@ -10,7 +10,7 @@ export const userLogin = (email, password) => async dispatch => {
     const config = {headers: {'Content-Type': 'application/json'}};
 
     const {data} = await axios.post(
-      `https://mern-nest-ecommerce.herokuapp.com/api/v2/login`,
+      `${URI}/api/v2/login`,
       {email, password},
       config,
     );
@@ -26,13 +26,12 @@ export const userLogin = (email, password) => async dispatch => {
   }
 };
 
-// Registration User
 export const register = (name, email, password, avatar) => async dispatch => {
   try {
     dispatch({type: 'userCreateRequest'});
 
     const {data} = await axios.post(
-      `https://mern-nest-ecommerce.herokuapp.com/api/v2/registration`,
+      `${URI}/api/v2/registration`,
       {name, email, password, avatar},
       {
         headers: {
@@ -48,14 +47,13 @@ export const register = (name, email, password, avatar) => async dispatch => {
     });
   }
 };
-
 // Load User
 export const loadUser = () => async dispatch => {
   try {
     dispatch({type: 'userLoadRequest'});
 
     const {data} = await axios.get(
-      `https://mern-nest-ecommerce.herokuapp.com/api/v2/me`,
+      `${URI}/api/v2/me`,
     );
 
     dispatch({type: 'userLoadSuccess', payload: data.user});
@@ -64,29 +62,26 @@ export const loadUser = () => async dispatch => {
   }
 };
 
-
 // Log out User
 
 export const logOutUser = () => async dispatch => {
   try {
-    await axios.get(`https://mern-nest-ecommerce.herokuapp.com/api/v2/logout`);
+    await axios.get(`${URI}/api/v2/logout`);
     dispatch({type: 'userLogOutSucess'});
   } catch (error) {
     dispatch({type: 'userLogOutFail', payload: error.response.data.message});
   }
 };
 
-
-
 // Forgot Password
-export const forgotPassword = (email) => async dispatch => {
+export const forgotPassword = email => async dispatch => {
   try {
     dispatch({type: 'forgotPasswordRequest'});
 
     const config = {headers: {'Content-Type': 'application/json'}};
 
     const {data} = await axios.post(
-      `https://mern-nest-ecommerce.herokuapp.com/api/v2/password/forgot`,
+      `${URI}/api/v2/password/forgot`,
       {email},
       config,
     );
@@ -98,4 +93,3 @@ export const forgotPassword = (email) => async dispatch => {
     });
   }
 };
-

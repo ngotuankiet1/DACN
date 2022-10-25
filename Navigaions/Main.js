@@ -6,6 +6,7 @@ import ProductsScreen from '../src/screens/ProductsScreen';
 import WishListScreen from '../src/screens/WishListScreen';
 import CartScreen from '../src/screens/CartScreen';
 import ProfileScreen from '../src/screens/ProfileScreen';
+import OrderScreen from '../src/screens/OrderScreen';
 import DrawerItem from '../src/components/Layout/DrawerItem';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -32,25 +33,38 @@ const Main = () => {
           drawerIcon: ({color}) => <Icon name="home" size={25} color={color} />,
         }}
       />
-        <Drawer.Screen
-          name="Product"
-          component={ProductsScreen}
-          options={{
-            drawerIcon: ({focused}) => <Icon name="shopping-basket" size={25}/>,
-          }}
-        />
+      <Drawer.Screen
+        name="Product"
+        component={ProductsScreen}
+        options={{
+          drawerIcon: ({focused}) => <Icon name="shopping-basket" size={25} />,
+        }}
+      />
       <Drawer.Screen
         name="WishList"
         component={WishListScreen}
         options={{
-          drawerIcon: ({color}) => <Icon name="heart" size={25} color={color} />,
+          drawerIcon: ({color}) => (
+            <Icon name="heart" size={25} color={color} />
+          ),
         }}
       />
       <Drawer.Screen
         name="Cart"
         component={CartScreen}
         options={{
-          drawerIcon: ({color}) => <Icon name="shopping-cart" size={25} color={color} />,
+          drawerIcon: ({color}) => (
+            <Icon name="shopping-cart" size={25} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="My Order"
+        component={OrderScreen}
+        options={{
+          drawerIcon: ({color}) => (
+            <Icon name="book" size={25} color={color} />
+          ),
         }}
       />
       <Drawer.Screen

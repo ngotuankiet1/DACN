@@ -1,13 +1,12 @@
-import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
 import Header from '../components/Layout/Header';
-import Cart from "../components/Cart/Cart";
-export default function CartScreen({navigation}) {
-  // render
+
+export default function OrderScreen({navigation}) {
   return (
     <View>
       <Header navigation={navigation} />
-      <Cart navigation={navigation} />
+      <Text>OrderScreen</Text>
     </View>
   );
 }

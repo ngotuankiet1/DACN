@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 import {userLogin} from '../../../Redux/Actions/UserAction';
 var {width} = Dimensions.get('window');
@@ -51,7 +52,7 @@ export default function logins({navigation}) {
       </View>
       <View style={styles.LoginBox}>
         <View style={styles.relative}>
-          <Icon name="rocket" size={30} style={styles.icon} />
+          <Icon2 name="mail-outline" size={30} style={styles.icon} />
           <TextInput
             placeholder="Write your email..."
             placeholderTextColor="#333"

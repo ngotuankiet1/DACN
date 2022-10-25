@@ -26,6 +26,7 @@ export default function ForgotPassword({navigation}) {
       alert(message);
     }
   }, [alert, error, message]);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -36,7 +37,7 @@ export default function ForgotPassword({navigation}) {
         onChangeText={item => setEmail(item)}
       />
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity onPress={forGotPassword} style={styles.button}>
         <View>
           <Text
             style={{

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import {register} from '../../../Redux/Actions/UserAction';
 import { useDispatch, useSelector } from 'react-redux';
@@ -78,7 +79,7 @@ export default function SignUp({navigation}) {
           />
         </View>
         <View style={styles.relative}>
-          <Icon name="rocket" size={30} style={styles.icon} />
+          <Icon2 name="mail-outline" size={30} style={styles.icon} />
           <TextInput
             placeholder="Write your email..."
             placeholderTextColor="#333"
