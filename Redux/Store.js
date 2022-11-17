@@ -1,4 +1,5 @@
 import {configureStore} from '@reduxjs/toolkit';
+import {newOrderReducer, orderDataReducer} from './Reducers/OrderReducer';
 import {
   cartAddReducer,
   cartDataReducer,
@@ -9,7 +10,7 @@ import {
   wishListDataReducer,
   wishListRemoveReducer,
 } from './Reducers/ProductReducer';
-import {forgotPasswordReducer, userReducer} from './Reducers/UserReducer';
+import {forgotPasswordReducer, updateProfileReducer, userReducer} from './Reducers/UserReducer';
 
 const Store = configureStore({
   reducer: {
@@ -23,7 +24,14 @@ const Store = configureStore({
     cartAdd: cartAddReducer,
     cartRemove: cartRemoveReducer,
     cartUpdate: cartUpdateReducer,
+    orderNew: newOrderReducer,
+    orderData: orderDataReducer,
+    updateProfile: updateProfileReducer,
   },
+  middleware: getDefaultMiddleware =>
+  getDefaultMiddleware({
+    immutableCheck: false,
+    serializableCheck: false,
+  }),
 });
-
 export default Store;

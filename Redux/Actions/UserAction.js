@@ -93,3 +93,27 @@ export const forgotPassword = email => async dispatch => {
     });
   }
 };
+
+
+// update profile
+export const updateProfile = (name, email, avatar) => async dispatch => {
+  try {
+    dispatch({type: 'updateProfileReducer'});
+
+    const config = {headers: {'Content-Type': 'application/json'}};
+
+    const {data} = await axios.put(
+      `${URI}/api/v2/me/update/info`,
+      {name, email, avatar},
+      config,
+    );
+    dispatch({type: 'updateProfileSuccess', payload: data.success});
+  } catch (error) {
+    dispatch({
+      type: 'updateProfileFailed',
+      payload: error.response.data.message,
+    });
+    console.log(error.response.data.message);
+  }
+};
+

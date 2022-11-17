@@ -1,74 +1,89 @@
-import React, {useState, useEffect} from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   View,
-  Form,
-  TextInput,
-  Button,
-  Image,
+  Dimensions,
   TouchableOpacity,
+  TextInput,
+  Image,
+  ToastAndroid,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon2 from 'react-native-vector-icons/Ionicons';
+import React, {useEffect, useState} from 'react';
+var {width} = Dimensions.get('window');
+import Icon from 'react-native-vector-icons/Ionicons';
 import ImagePicker from 'react-native-image-crop-picker';
 import {register} from '../../../Redux/Actions/UserAction';
-import { useDispatch, useSelector } from 'react-redux';
-var {width} = Dimensions.get('window');
+import {useDispatch, useSelector} from 'react-redux';
 
 export default function SignUp({navigation}) {
+  const {error, loading, isAuthenticated} = useSelector(state => state.user);
+
+  const dispatch = useDispatch();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [image, setImage] = useState(
-    'https://mern-nest-ecommerce.herokuapp.com/profile.png',
-  );
-  const {error, loading, isAuthenticated} = useSelector(state => state.user);
-  const dispatch = useDispatch();
+  const [avatar, setAvatar] = useState('');
+
+  console.log(name, email, password, avatar);
+
   const uploadImage = () => {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
       cropping: true,
       compressImageQuality: 0.8,
+      includeBase64: true,
     }).then(image => {
-      setImage(image.path);
+      setAvatar('data:image/jpeg;base64,' + image.data);
     });
   };
 
   const registerUser = () => {
-    dispatch(register(name, email, password, image));
+    dispatch(register(name, email, password, avatar));
+    ToastAndroid.showWithGravity(
+      'Register Successfully',
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM,
+    );
   };
 
   useEffect(() => {
     if (error) {
-      alert(error);
-      dispatch({ type: "clearErrors" });
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
+      dispatch({type: 'clearErrors'});
     }
-
-    if (isAuthenticated) {
-      alert('User create Done!');
-    }
-  }, [dispatch, error, alert, isAuthenticated]);
+  }, [dispatch, error, isAuthenticated]);
 
   return (
     <View style={styles.container}>
       <View style={styles.LoginHeader}>
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 30,
+            fontWeight: '700',
+            fontFamily: 'Roboto',
+            color: '#333',
+          }}>
+          Welcome,
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
             fontWeight: '500',
             fontFamily: 'sans-serif',
             color: '#555',
           }}>
-          Welcome
+          Crate an account to continue!
         </Text>
-        <Text>Sign In to continue</Text>
       </View>
       <View style={styles.LoginBox}>
         <View style={styles.relative}>
-          <Icon name="user" size={30} style={styles.icon} />
+          <Icon name="person-circle-outline" size={25} style={styles.icon} />
           <TextInput
             placeholder="Write your name..."
             placeholderTextColor="#333"
@@ -79,7 +94,7 @@ export default function SignUp({navigation}) {
           />
         </View>
         <View style={styles.relative}>
-          <Icon2 name="mail-outline" size={30} style={styles.icon} />
+          <Icon name="mail-open-outline" size={25} style={styles.icon} />
           <TextInput
             placeholder="Write your email..."
             placeholderTextColor="#333"
@@ -91,14 +106,14 @@ export default function SignUp({navigation}) {
           />
         </View>
         <View style={styles.relative}>
-          <Icon name="lock" size={30} style={styles.icon} />
+          <Icon name="lock-closed-outline" size={25} style={styles.icon} />
           <TextInput
             placeholder="Write your password..."
             placeholderTextColor="#333"
-            style={styles.inputBox}
             value={password}
             onChangeText={text => setPassword(text)}
-            textContentType="emailAddress"
+            style={styles.inputBox}
+            textContentType="password"
             secureTextEntry={true}
           />
         </View>
@@ -110,7 +125,12 @@ export default function SignUp({navigation}) {
               alignItems: 'center',
             }}>
             <Image
-              source={{uri: image}}
+              source={{
+                uri:
+                  avatar === ''
+                    ? 'https://mern-ecommerce-stores.herokuapp.com/profile.png'
+                    : avatar,
+              }}
               style={{
                 width: 40,
                 height: 40,
@@ -124,8 +144,8 @@ export default function SignUp({navigation}) {
               <View
                 style={{
                   marginLeft: 10,
-                  width: width * 1 - 100,
                   height: 50,
+                  width: width * 1 - 100,
                   backgroundColor: '#f5f5f5',
                   textAlign: 'center',
                   justifyContent: 'center',
@@ -137,14 +157,14 @@ export default function SignUp({navigation}) {
                     color: '#333',
                     fontSize: 18,
                   }}>
-                  Chosse Photo
+                  Choose Photo
                 </Text>
               </View>
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={registerUser}>
             <View style={styles.Button}>
-              <Text style={{color: '#fff', fontSize: 18}}>SignUp</Text>
+              <Text style={{color: '#fff', fontSize: 18}}>Sign Up</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -161,9 +181,9 @@ export default function SignUp({navigation}) {
             color: '#333',
             fontSize: 15,
           }}>
-          Already have an account ?
+          Already have a account ?
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text
             style={{
               fontSize: 15,
@@ -188,8 +208,7 @@ const styles = StyleSheet.create({
   },
   LoginHeader: {
     width: width * 1,
-    paddingVertical: 20,
-    paddingTop: 15,
+    paddingTop: width / 5,
     paddingLeft: 10,
   },
   inputBox: {
@@ -197,8 +216,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
     borderColor: '#3BB77E',
-    paddingLeft: 50,
+    paddingLeft: 45,
     fontSize: 15,
+    color: '#333',
     marginVertical: 10,
   },
   relative: {

@@ -5,7 +5,7 @@ const AuthScreen = ({navigation}) => {
 // render
   return (
     <View>
-      <Text onPress={() => navigation.navigate("Home2")}>AuthScreen</Text>
+      <Text onPress={() => navigation.navigate("Home")}>AuthScreen</Text>
     </View>
   )
 }

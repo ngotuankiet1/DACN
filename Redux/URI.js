@@ -1,1 +1,1 @@
-export const URI = "https://mern-ecommerce-stores.herokuapp.com"
+export const URI = "https://doanchuyennganh.herokuapp.com"

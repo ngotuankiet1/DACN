@@ -1,84 +1,103 @@
-import React, {useEffect,useState} from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   View,
-  Form,
-  TextInput,
-  Button,
+  Dimensions,
   TouchableOpacity,
+  TextInput,
+  ToastAndroid,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon2 from 'react-native-vector-icons/Ionicons';
-import {useDispatch, useSelector} from 'react-redux';
-import {userLogin} from '../../../Redux/Actions/UserAction';
+import React, {useEffect, useState} from 'react';
 var {width} = Dimensions.get('window');
+import Icon from 'react-native-vector-icons/Ionicons';
+import {userLogin} from '../../../Redux/Actions/UserAction';
+import {useDispatch, useSelector} from 'react-redux';
 
-export default function logins({navigation}) {
+export default function Login({navigation}) {
   const dispatch = useDispatch();
 
   const {error, isAuthenticated} = useSelector(state => state.user);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const loginSubmit = e => {
+    e.preventDefault();
     dispatch(userLogin(email, password));
   };
-
   useEffect(() => {
     if (error) {
-      alert(error);
+      ToastAndroid.showWithGravity(
+        error,
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
     }
     if (isAuthenticated) {
-     alert("yeah login!")
+      ToastAndroid.showWithGravity(
+        'yeah login!',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
     }
-  }, [dispatch, error, alert, isAuthenticated]);
+  }, [dispatch, error, isAuthenticated]);
 
   return (
     <View style={styles.container}>
       <View style={styles.LoginHeader}>
         <Text
           style={{
-            fontSize: 15,
+            fontSize: 30,
+            fontWeight: '700',
+            fontFamily: 'Roboto',
+            color: '#333',
+          }}>
+          Welcome,
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
             fontWeight: '500',
             fontFamily: 'sans-serif',
             color: '#555',
           }}>
-          Welcome
+          Sign in to continue!
         </Text>
-        <Text>Sign Up to continue</Text>
       </View>
       <View style={styles.LoginBox}>
         <View style={styles.relative}>
-          <Icon2 name="mail-outline" size={30} style={styles.icon} />
+          <Icon name="mail-open-outline" size={25} style={styles.icon} />
           <TextInput
             placeholder="Write your email..."
             placeholderTextColor="#333"
             style={styles.inputBox}
             textContentType="emailAddress"
+            keyboardType="email-address"
             value={email}
             onChangeText={setEmail}
           />
         </View>
         <View style={styles.relative}>
-          <Icon name="lock" size={30} style={styles.icon} />
+          <Icon name="lock-closed-outline" size={25} style={styles.icon} />
           <TextInput
             placeholder="Write your password..."
             placeholderTextColor="#333"
             style={styles.inputBox}
-            textContentType="emailAddress"
+            textContentType="password"
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
           />
+          <Text
+            style={{
+              textAlign: 'right',
+              color: '#333',
+              fontSize: 15,
+            }}
+            onPress={() => navigation.navigate('Forgot')}>
+            Forgot Password ?
+          </Text>
           <TouchableOpacity onPress={loginSubmit}>
-            <Text style={{color: '#333', fontSize: 15, textAlign: 'right'}}
-            onPress={() => navigation.navigate("Forgot")}
-            >
-              Forgot Password ?
-            </Text>
             <View style={styles.Button}>
               <Text style={{color: '#fff', fontSize: 18}}>Login</Text>
             </View>
@@ -124,8 +143,7 @@ const styles = StyleSheet.create({
   },
   LoginHeader: {
     width: width * 1,
-    paddingVertical: 20,
-    paddingTop: 15,
+    paddingTop: width / 5,
     paddingLeft: 10,
   },
   inputBox: {
@@ -133,8 +151,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
     borderColor: '#3BB77E',
-    paddingLeft: 50,
+    paddingLeft: 45,
     fontSize: 15,
+    color: '#333',
     marginVertical: 10,
   },
   relative: {

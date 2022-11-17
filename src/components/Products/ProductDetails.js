@@ -160,7 +160,7 @@ export default function ProductDetails({route, navigation}) {
       });
     }
     dispatch(getCart());
-  }, [route.params?.wishlistData, getCart, cartData]);
+  }, [route.params?.wishlistData, cartData]);
 
   return (
     <View
@@ -170,7 +170,7 @@ export default function ProductDetails({route, navigation}) {
         width: width * 1,
       }}>
       <View style={styles.productDetailsTop}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity  onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" color="#333" size={30} />
         </TouchableOpacity>
         {click ? (

@@ -1,5 +1,5 @@
 import React from 'react';
-import AuthScreen from '../src/screens/AuthScreen';
+// import AuthScreen from '../src/screens/AuthScreen';
 import Tabs from './Tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import ProductsScreen from '../src/screens/ProductsScreen';
@@ -9,6 +9,7 @@ import ProfileScreen from '../src/screens/ProfileScreen';
 import OrderScreen from '../src/screens/OrderScreen';
 import DrawerItem from '../src/components/Layout/DrawerItem';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Image} from 'react-native';
 
 const Main = () => {
   const Drawer = createDrawerNavigator();
@@ -33,13 +34,24 @@ const Main = () => {
           drawerIcon: ({color}) => <Icon name="home" size={25} color={color} />,
         }}
       />
-      <Drawer.Screen
-        name="Product"
-        component={ProductsScreen}
-        options={{
-          drawerIcon: ({focused}) => <Icon name="shopping-basket" size={25} />,
-        }}
-      />
+       <Drawer.Screen
+          name="Products"
+          component={ProductsScreen}
+          options={{
+            drawerIcon: ({focused}) => (
+              <Image
+                source={require('../src/Assets/BottomTab/shop.png')}
+                style={{
+                  width: 20,
+                  height: 20,
+                  resizeMode: 'contain',
+                  opacity: focused ? 1 : 0.7,
+                  tintColor: focused ? '#fff' : null,
+                }}
+              />
+            ),
+          }}
+        />
       <Drawer.Screen
         name="WishList"
         component={WishListScreen}
@@ -50,14 +62,23 @@ const Main = () => {
         }}
       />
       <Drawer.Screen
-        name="Cart"
-        component={CartScreen}
-        options={{
-          drawerIcon: ({color}) => (
-            <Icon name="shopping-cart" size={25} color={color} />
-          ),
-        }}
-      />
+          name="Cart"
+          component={CartScreen}
+          options={{
+            drawerIcon: ({focused}) => (
+              <Image
+                source={require('../src/Assets/BottomTab/cart.png')}
+                style={{
+                  width: 20,
+                  height: 20,
+                  resizeMode: 'contain',
+                  opacity: focused ? 1 : 0.7,
+                  tintColor: focused ? '#fff' : null,
+                }}
+              />
+            ),
+          }}
+        />
       <Drawer.Screen
         name="My Order"
         component={OrderScreen}

@@ -17,7 +17,6 @@ export default function OrderScreen({navigation}) {
     getStripeApiKey(publishableKey);
   }, []);
 
-  console.log(publishableKey);
   return (
     <StripeProvider publishableKey={publishableKey}>
       <Header navigation={navigation} />

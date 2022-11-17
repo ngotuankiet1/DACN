@@ -9,17 +9,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {useSelector} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 import OrderSteps from './OrderSteps';
 import {CardField, useStripe} from '@stripe/stripe-react-native';
 import {URI} from '../../../Redux/URI';
 import axios from 'axios';
+import {createOrder} from '../../../Redux/Actions/OrderAcrion';
+
 
 const {width} = Dimensions.get('window');
 const height = Dimensions.get('window').height;
 
 export default function Order() {
+  const navigation = useNavigation();
   const {cartData} = useSelector(state => state.cart);
   const {user} = useSelector(state => state.user);
   const [active, setActive] = useState(1);
@@ -30,7 +34,31 @@ export default function Order() {
   const [cityName, setCityName] = useState('');
   const [subtotal, setSubtotal] = useState(0);
   const [success, setSuccess] = useState(false);
+
+  // Be make sure that add it's on top
   const totalPrice = cartData.reduce((acc, curr) => acc + curr.productPrice, 0);
+
+  const paymentData = {
+    amount: Math.round(totalPrice * 100),
+  };
+
+  const {createPaymentMethod} = useStripe();
+  const dispatch = useDispatch();
+
+  const order = {
+    shippingInfo: {
+      address,
+      city: cityName,
+      country: countryName,
+      state,
+    },
+    phoneNumber,
+    orderItems: cartData,
+    itemsPrice: subtotal,
+    shippingPrice: totalPrice > 100 ? 0 : 10,
+    totalPrice: totalPrice,
+  };
+
   const shippingDetailsHandler = () => {
     if (
       address.length > 0 &&
@@ -55,39 +83,93 @@ export default function Order() {
     }
   };
 
-  const submitHandler = async () => {};
+  const submitHandler = async () => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const {data} = await axios.post(
+      `${URI}/api/v2/payment/process`,
+      paymentData,
+      config,
+    );
+    const clientSecret = data.client_secret;
+
+    const billingDetails = {
+      name: user.name,
+      email: user.email,
+      phone: phoneNumber,
+    };
+
+    const paymentIntent = await createPaymentMethod({
+      paymentIntentClientSecret: clientSecret,
+      paymentMethodType: 'Card',
+      paymentMethodData: {
+        billingDetails,
+      },
+    });
+    if (paymentIntent.error) {
+      ToastAndroid.showWithGravity(
+        'Something went wrong',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
+    } else if (paymentIntent) {
+      order.paymentInfo = {
+        id: paymentIntent.paymentMethod.id,
+        status: 'success',
+      };
+      ToastAndroid.showWithGravity(
+        'Payment Successful',
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM,
+      );
+      dispatch(createOrder(order));
+      setSuccess(true);
+    }
+  };
   return (
     <View>
-      <OrderSteps activeTab={active} />
-      {active === 1 ? (
-        <ShippingInfo
-          activeTab={active}
-          address={address}
-          setAddress={setAddress}
-          phoneNumber={phoneNumber}
-          setPhoneNumber={setPhoneNumber}
-          countryName={countryName}
-          setCountryName={setCountryName}
-          cityName={cityName}
-          setCityName={setCityName}
-          setState={setState}
-          state={state}
-          shippingDetailsHandler={shippingDetailsHandler}
-        />
-      ) : active === 2 ? (
-        <Confirmation
-          cartData={cartData}
-          user={user}
-          phoneNumber={phoneNumber}
-          address={address}
-          countryName={countryName}
-          cityName={cityName}
-          confirmOrderHandler={confirmOrderHandler}
-          setSubtotal={setSubtotal}
-        />
-      ) : active === 3 ? (
-        <PaymentInfo submitHandler={submitHandler} totalPrice={totalPrice} />
-      ) : null}
+      {success === true ? (
+        <Success navigation={navigation} />
+      ) : (
+        <>
+          <OrderSteps activeTab={active} />
+          {active === 1 ? (
+            <ShippingInfo
+              activeTab={active}
+              address={address}
+              setAddress={setAddress}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              countryName={countryName}
+              setCountryName={setCountryName}
+              cityName={cityName}
+              setCityName={setCityName}
+              setState={setState}
+              state={state}
+              shippingDetailsHandler={shippingDetailsHandler}
+            />
+          ) : active === 2 ? (
+            <Confirmation
+              cartData={cartData}
+              user={user}
+              phoneNumber={phoneNumber}
+              address={address}
+              countryName={countryName}
+              cityName={cityName}
+              confirmOrderHandler={confirmOrderHandler}
+              setSubtotal={setSubtotal}
+            />
+          ) : active === 3 ? (
+            <PaymentInfo
+              submitHandler={submitHandler}
+              totalPrice={totalPrice}
+            />
+          ) : null}
+        </>
+      )}
     </View>
   );
 }
@@ -200,7 +282,9 @@ const Confirmation = ({
         </Text>
         {cartData &&
           cartData.map((item, index) => {
-            setSubtotal(item.productPrice);
+            useEffect(() => {
+              setSubtotal(item.productPrice);
+            }, []);
             return (
               <View key={index} style={styles.confirmationTop}>
                 <View style={{flexDirection: 'row'}}>
@@ -260,10 +344,31 @@ const PaymentInfo = ({totalPrice, submitHandler}) => {
           color: '#333',
         }}
       />
-      {/* <TouchableOpacity style={styles.button} onPress={submitHandler}>
+      <TouchableOpacity style={styles.button} onPress={submitHandler}>
         <Text style={styles.buttonText}>Pay - ${totalPrice}</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </ScrollView>
+  );
+};
+
+const Success = ({navigation}) => {
+  return (
+    <View style={styles.success}>
+      <Text
+        style={{
+          color: '#333',
+          fontSize: 20,
+          textAlign: 'center',
+          marginBottom: 20,
+        }}>
+        Your Order is Placed Successfully😍
+      </Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('My Order')}>
+        <Text style={styles.buttonText}>View Order</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
